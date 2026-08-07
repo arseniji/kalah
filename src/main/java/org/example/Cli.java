@@ -15,7 +15,7 @@ public class Cli {
         Scanner sc = new Scanner(System.in);
         while (!state.gameOver()){
             showBoard(state.board());
-            System.out.println("Ход " + state.current() + ", выбери лунку:");
+            System.out.println("Ход " + state.current() + ", доступны " + engine.legalMoves(state) + ":");
             if (!sc.hasNextInt()){
                 if (!sc.hasNext()){
                     System.out.println("Ввод закончился, выходим");
@@ -26,7 +26,7 @@ public class Cli {
                 continue;
             }
             int index = sc.nextInt();
-            if (!state.board().isMovable(index, state.current())) {
+            if (!engine.isLegal(state, index)) {
                 System.out.println("Нельзя так ходить");
                 continue;
             }

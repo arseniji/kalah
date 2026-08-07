@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public class Board {
     private final int[] board;
+
     public Board(){
         this.board = new int[]{4,4,4,4,4,4,0,4,4,4,4,4,4,0};
     }
@@ -16,10 +17,6 @@ public class Board {
         return board[index];
     }
 
-    public void setPit(int index,int value){
-        board[index] = value;
-    }
-
     public int[] getBoard(){
         return Arrays.copyOf(board, board.length);
     }
@@ -28,20 +25,27 @@ public class Board {
         return Math.abs(board.length - 2 - index);
     }
 
-    public boolean isMovable(int index, Side s) {
-        return s.owns(index) && board[index] != 0;
-    }
 
-    public int move(int index,Side s){
-        int value = board[index];
-        board[index] = 0;
+    public int sow(int from, int skip){
+        int value = takeAll(from);
+        int index = from;
         while (value > 0){
             index = nextPit(index);
-            if (index == s.opponent().store) index = nextPit(index);
-            board[index]+=1;
+            if (index == skip) index = nextPit(index);
+            board[index]++;
             value--;
         }
         return index;
+    }
+
+    public int takeAll(int index){
+        int value = board[index];
+        board[index] = 0;
+        return value;
+    }
+
+    public void add(int index, int count){
+        board[index] += count;
     }
 
     private int nextPit(int currentIndex){

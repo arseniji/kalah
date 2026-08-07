@@ -1,91 +1,46 @@
 package org.example;
 
-import java.util.Scanner;
-
 public class Engine {
-    Board board;
-    Player p1;
-    Player p2;
-    Player current;
+    public Engine(){}
 
-    public Engine(){
-        board = new Board();
-        p1 = new Player(1);
-        p2 = new Player(2);
-        current = p1;
-    }
-
-    public void startGame(){
-        Scanner sc = new Scanner(System.in);
-        boolean gameOver = false;
-        while (!gameOver){
-            board.showBoard();
-            System.out.println("Игрок " + current.number + ", выбери лунку:");
-            int index = sc.nextInt();
-            if (!board.isMovable(index, current)) {
-                System.out.println("Нельзя так ходить");
-                continue;
-            }
-            move(index);
-            gameOver = checkWin(p1) || checkWin(p2);
+    public GameState move(GameState state, int index){
+        if (!state.board().isMovable(index, state.current()))
+            throw new IllegalArgumentException("Недопустимый ход: " + index);
+        Board nextBoard = new Board(state.board().getBoard());
+        Side side = state.current();
+        int lastIndex = nextBoard.move(index, side);
+        if (checkCapture(lastIndex,nextBoard,side)) {
+            int opposite = nextBoard.oppositePit(lastIndex);
+            int captured = nextBoard.getPit(opposite) + 1;
+            nextBoard.setPit(opposite, 0);
+            nextBoard.setPit(lastIndex, 0);
+            nextBoard.setPit(side.store,nextBoard.getPit(side.store) + captured);
         }
-        sweepRemaining();
-        board.showBoard();
+
+        Side turn = (lastIndex == side.store) ? side : side.opponent();
+        boolean gameOver = isSideEmpty(nextBoard, Side.SOUTH) || isSideEmpty(nextBoard, Side.NORTH);
+        if (gameOver) sweepRemaining(nextBoard);
+
+        return new GameState(nextBoard, turn, gameOver);
     }
 
-    public void move(int index){
-        if (board.isMovable(index,current)){
-            int[] prevBoard = board.getBoard();
-            int lastIndex = board.move(index,current);
-            if (checkCapture(lastIndex,prevBoard,current)) {
-                int captured = board.getPit(board.oppositePit(lastIndex)) + 1;
-                board.setPit(board.oppositePit(lastIndex), 0);
-                board.setPit(lastIndex, 0);
-                if (current.number == 1) board.setPit(6,board.getPit(6) + captured);
-                else board.setPit(13,board.getPit(13) + captured);
-            }
-            if (!checkExtraTurn(lastIndex)) nextPlayer();
-        }
-    }
-
-    private boolean checkExtraTurn(int lastIndex){
-        return lastIndex == 6 || lastIndex == 13;
-    }
-
-    private boolean checkCapture(int lastIndex, int[] prevBoard, Player p){
-        if (lastIndex < 6 && p.number == 1)
-            if (prevBoard[lastIndex] == 0 && board.getPit(board.oppositePit(lastIndex)) != 0) return true;
-        if (lastIndex > 6 && lastIndex < 13 && p.number == 2)
-            if (prevBoard[lastIndex] == 0 && board.getPit(board.oppositePit(lastIndex)) != 0) return true;
+    public boolean checkCapture(int lastIndex, Board nextBoard, Side s){
+        if (s.owns(lastIndex))
+            return nextBoard.getPit(lastIndex) == 1 && nextBoard.getPit(nextBoard.oppositePit(lastIndex)) != 0;
         return false;
     }
 
-    private boolean checkWin(Player p){
-        int[] currentBoard = board.getBoard();
-        boolean winFlag = true;
-        if (p.number == 1){
-            for (int i = 0; i < 6; i++){
-                if (currentBoard[i] != 0) winFlag = false;
-            }
-        }
-        if (p.number == 2){
-            for (int i = 7; i < 13; i++){
-                if (currentBoard[i] != 0) winFlag = false;
-            }
-        }
-        return winFlag;
+    public boolean isSideEmpty(Board b, Side s){
+        for (int i = s.first; i <= s.last; i++)
+            if (b.getPit(i) != 0) return false;
+        return true;
     }
 
-    private void nextPlayer(){
-        if (current == p1) current = p2;
-        else current = p1;
-    }
-
-    private void sweepRemaining(){
-        int sumP1 = 0, sumP2 = 0;
-        for (int i = 0; i < 6; i++){ sumP1 += board.getPit(i); board.setPit(i,0); }
-        for (int i = 7; i < 13; i++){ sumP2 += board.getPit(i); board.setPit(i,0); }
-        board.setPit(6, board.getPit(6) + sumP1);
-        board.setPit(13, board.getPit(13) + sumP2);
+    public void sweepRemaining(Board b){
+        for (Side s : Side.values()){
+            int sum = 0;
+            for (int i = s.first; i <= s.last; i++){ sum += b.getPit(i); b.setPit(i,0); }
+            b.setPit(s.store, b.getPit(s.store) + sum);
+        }
     }
 }

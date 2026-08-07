@@ -1,9 +1,11 @@
-package org.example;
+package org.example.game;
 
 public enum Side {
     SOUTH(0,5,6),
     NORTH(7,12,13);
-    final int first,last,store;
+    public final int first;
+    public final int last;
+    public final int store;
 
     Side(int first, int last, int store) {
         this.first = first;

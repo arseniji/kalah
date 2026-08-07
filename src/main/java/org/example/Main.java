@@ -1,7 +1,7 @@
 package org.example;
 public class Main {
-    public static void main(String[] args) {
-        Engine e = new Engine();
-        e.startGame();
+     static void main() {
+        Cli c = new Cli();
+        c.startGame();
     }
 }

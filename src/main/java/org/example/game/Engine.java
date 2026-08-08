@@ -28,7 +28,7 @@ public class Engine {
         int lastIndex = nextBoard.sow(index, side.opponent().store);
 
         if (isCapture(nextBoard, lastIndex, side)) {
-            int captured = nextBoard.takeAll(nextBoard.oppositePit(lastIndex)) + nextBoard.takeAll(lastIndex);
+            int captured = nextBoard.takeAll(nextBoard.oppositePitIndex(lastIndex)) + nextBoard.takeAll(lastIndex);
             nextBoard.add(side.store, captured);
         }
 
@@ -41,7 +41,7 @@ public class Engine {
 
     private boolean isCapture(Board b, int lastIndex, Side s){
         if (!s.owns(lastIndex)) return false;
-        return b.getPit(lastIndex) == 1 && b.getPit(b.oppositePit(lastIndex)) != 0;
+        return b.getPit(lastIndex) == 1 && b.getPit(b.oppositePitIndex(lastIndex)) != 0;
     }
 
     private boolean isSideEmpty(Board b, Side s){

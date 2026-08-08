@@ -57,7 +57,7 @@ public enum Personality implements Evaluator{
             int landing = j + n;
             if (landing > s.last) continue;
             if (b.getPit(landing) != 0) continue;
-            best = Math.max(best, b.getPit(b.oppositePit(landing)) + 1);
+            best = Math.max(best, b.getPit(b.oppositePitIndex(landing)) + 1);
         }
         return best;
     }

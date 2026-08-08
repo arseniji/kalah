@@ -21,7 +21,7 @@ public class Board {
         return Arrays.copyOf(board, board.length);
     }
 
-    public int oppositePit(int index){
+    public int oppositePitIndex(int index){
         return Math.abs(board.length - 2 - index);
     }
 

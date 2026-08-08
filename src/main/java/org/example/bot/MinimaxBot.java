@@ -18,23 +18,34 @@ public class MinimaxBot implements Bot{
         int bestScore = Integer.MIN_VALUE;
         int bestPit = -1;
 
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
         for (int pitIndex : engine.legalMoves(state)){
-            int score = search(engine.move(state,pitIndex),depth - 1, me);
+            int score = search(engine.move(state,pitIndex),depth - 1, me,alpha,beta);
             if (score > bestScore) {
                 bestPit = pitIndex;
                 bestScore = score;
             }
+            alpha = Math.max(bestScore,alpha);
         }
         return bestPit;
     }
 
-    private int search(GameState state, int depth, Side me){
+    private int search(GameState state, int depth, Side me, int alpha, int beta){
         if (state.gameOver() || depth == 0) return eval(state,me);
         boolean maximization = me == state.current();
         int best = maximization ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         for (int pitIndex : engine.legalMoves(state)){
-            int score = search(engine.move(state,pitIndex),depth - 1, me);
-            best = maximization ? Math.max(best,score) : Math.min(best,score);
+            int score = search(engine.move(state,pitIndex),depth - 1, me,alpha,beta);
+            if (maximization){
+                best = Math.max(best,score);
+                alpha = Math.max(alpha,best);
+            }
+            else {
+                best = Math.min(best,score);
+                beta = Math.min(beta,best);
+            }
+            if (beta <= alpha) break;
         }
         return best;
     }

@@ -15,6 +15,7 @@
         <module>kalah-core</module>
         <module>kalah-bot</module>
         <module>kalah-cli</module>
+        <module>kalah-api</module>
     </modules>
 
     <properties>
@@ -22,8 +23,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- Версии общих зависимостей задаются здесь, а подключает их тот модуль,
-         которому они нужны. Пока пусто — ни одной внешней зависимости нет. -->
     <dependencyManagement>
         <dependencies/>
     </dependencyManagement>

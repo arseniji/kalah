@@ -1,13 +1,12 @@
 package io.github.arseniji.kalah.cli;
 
+import io.github.arseniji.kalah.bot.Difficulty;
 import io.github.arseniji.kalah.bot.MinimaxBot;
-import io.github.arseniji.kalah.bot.RandomBot;
+import io.github.arseniji.kalah.bot.Personality;
 
 public class Main {
-     static void main() {
-         for (int i = 0; i < 10; i++){
-             Cli c = new Cli(new MinimaxBot(5), new RandomBot());
-             c.startGame();
-         }
+    static void main() {
+        Cli cli = new Cli(null, new MinimaxBot(Difficulty.Medium, Personality.Balanced));
+        cli.startGame();
     }
 }

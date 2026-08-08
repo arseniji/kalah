@@ -1,68 +1,68 @@
 package io.github.arseniji.kalah.cli;
 
+import io.github.arseniji.kalah.api.GameSession;
+import io.github.arseniji.kalah.api.GameView;
+import io.github.arseniji.kalah.api.LocalSession;
+import io.github.arseniji.kalah.api.MoveStep;
 import io.github.arseniji.kalah.bot.Bot;
-import io.github.arseniji.kalah.core.Board;
-import io.github.arseniji.kalah.core.Engine;
-import io.github.arseniji.kalah.core.GameState;
 import io.github.arseniji.kalah.core.Side;
 
 import java.util.Scanner;
 
 public class Cli {
-    private GameState state;
-    private final Engine engine;
-    private final Bot south;
-    private final Bot north;
+    private final GameSession session;
 
     public Cli(){
         this(null, null);
     }
 
     public Cli(Bot south, Bot north){
-        this.state = new GameState(new Board(), Side.SOUTH, false);
-        this.engine = new Engine();
-        this.south = south;
-        this.north = north;
+        this(new LocalSession(south, north));
+    }
+
+    public Cli(GameSession session){
+        this.session = session;
     }
 
     public void startGame(){
         Scanner sc = new Scanner(System.in);
-        while (!state.gameOver()){
-            showBoard(state.board());
-            Bot bot = botFor(state.current());
-            int index;
-            if (bot != null){
-                index = bot.chooseMove(state);
-                System.out.println("Ход " + state.current() + " (бот): " + index);
-            } else {
-                System.out.println("Ход " + state.current() + ", доступны " + engine.legalMoves(state) + ":");
-                if (!sc.hasNextInt()){
-                    if (!sc.hasNext()){
-                        System.out.println("Ввод закончился, выходим");
-                        return;
-                    }
-                    System.out.println("Нужно число");
-                    sc.next();
-                    continue;
+        GameView view = session.view();
+
+        if (!view.steps().isEmpty()) showSteps(view);
+        else showBoard(view.board());
+
+        while (!view.gameOver()){
+            System.out.println("Ход " + view.current() + ", доступны " + view.legalMoves() + ":");
+
+            if (!sc.hasNextInt()){
+                if (!sc.hasNext()){
+                    System.out.println("Ввод закончился, выходим");
+                    return;
                 }
-                index = sc.nextInt();
-                if (!engine.isLegal(state, index)) {
-                    System.out.println("Нельзя так ходить");
-                    continue;
-                }
+                System.out.println("Нужно число");
+                sc.next();
+                continue;
             }
-            state = engine.move(state, index);
+            int pit = sc.nextInt();
+            if (!view.legalMoves().contains(pit)) {
+                System.out.println("Нельзя так ходить");
+                continue;
+            }
+
+            view = session.move(pit);
+            showSteps(view);
         }
-        showBoard(state.board());
-        showResult(state.board());
+        showResult(view);
     }
 
-    private Bot botFor(Side side){
-        return side == Side.SOUTH ? south : north;
+    private void showSteps(GameView view){
+        for (MoveStep step : view.steps()){
+            System.out.println(step.side() + " ходит из лунки " + step.pit() + ":");
+            showBoard(step.board());
+        }
     }
 
-    public void showBoard(Board board){
-        int[] b = board.getBoard();
+    public void showBoard(int[] b){
         System.out.print('\t');
         for (int i = Side.NORTH.last; i >= Side.NORTH.first; i--){
             System.out.print(b[i] + " ");
@@ -77,9 +77,9 @@ public class Cli {
         System.out.println();
     }
 
-    public void showResult(Board board){
-        int south = board.getPit(Side.SOUTH.store);
-        int north = board.getPit(Side.NORTH.store);
+    public void showResult(GameView view){
+        int south = view.board()[Side.SOUTH.store];
+        int north = view.board()[Side.NORTH.store];
         System.out.println("SOUTH: " + south + "   NORTH: " + north);
         if (south > north) System.out.println("Победил SOUTH");
         else if (north > south) System.out.println("Победил NORTH");

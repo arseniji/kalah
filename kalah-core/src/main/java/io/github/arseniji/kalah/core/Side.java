@@ -1,4 +1,4 @@
-package org.example.game;
+package io.github.arseniji.kalah.core;
 
 public enum Side {
     SOUTH(0,5,6),

@@ -1,4 +1,4 @@
-package org.example.game;
+package io.github.arseniji.kalah.core;
 
 public record GameState(
         Board board,

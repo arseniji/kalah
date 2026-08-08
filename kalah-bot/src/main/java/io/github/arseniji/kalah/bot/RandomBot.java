@@ -1,7 +1,7 @@
-package org.example.bot;
+package io.github.arseniji.kalah.bot;
 
-import org.example.game.Engine;
-import org.example.game.GameState;
+import io.github.arseniji.kalah.core.Engine;
+import io.github.arseniji.kalah.core.GameState;
 
 import java.util.List;
 import java.util.Random;

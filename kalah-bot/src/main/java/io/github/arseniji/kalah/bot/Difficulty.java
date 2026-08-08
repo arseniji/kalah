@@ -1,4 +1,4 @@
-package org.example.bot;
+package io.github.arseniji.kalah.bot;
 
 public enum Difficulty {
     Easy(5, 30),

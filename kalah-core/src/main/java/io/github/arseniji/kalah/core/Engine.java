@@ -1,4 +1,4 @@
-package org.example.game;
+package io.github.arseniji.kalah.core;
 
 import java.util.ArrayList;
 import java.util.List;

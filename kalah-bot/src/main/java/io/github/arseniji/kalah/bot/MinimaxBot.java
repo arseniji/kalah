@@ -1,9 +1,9 @@
-package org.example.bot;
+package io.github.arseniji.kalah.bot;
 
-import org.example.game.Board;
-import org.example.game.Engine;
-import org.example.game.GameState;
-import org.example.game.Side;
+import io.github.arseniji.kalah.core.Board;
+import io.github.arseniji.kalah.core.Engine;
+import io.github.arseniji.kalah.core.GameState;
+import io.github.arseniji.kalah.core.Side;
 
 import java.util.*;
 

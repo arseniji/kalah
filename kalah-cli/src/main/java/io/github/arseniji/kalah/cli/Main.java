@@ -1,7 +1,7 @@
-package org.example;
+package io.github.arseniji.kalah.cli;
 
-import org.example.bot.MinimaxBot;
-import org.example.bot.RandomBot;
+import io.github.arseniji.kalah.bot.MinimaxBot;
+import io.github.arseniji.kalah.bot.RandomBot;
 
 public class Main {
      static void main() {

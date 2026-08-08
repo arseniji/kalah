@@ -8,9 +8,12 @@ import org.example.game.Side;
 import java.util.*;
 
 public class MinimaxBot implements Bot{
+    private static final int INF = 1_000_000;
+
     private final Engine engine = new Engine();
     private final int depth;
     private final Evaluator personality;
+    private final int tolerance;
     private final Random random = new Random();
 
     public MinimaxBot(int depth){
@@ -18,30 +21,40 @@ public class MinimaxBot implements Bot{
     }
 
     public MinimaxBot(int depth, Evaluator personality){
+        this(depth, personality, 0);
+    }
+
+    public MinimaxBot(Difficulty difficulty, Evaluator personality){
+        this(difficulty.depth, personality, difficulty.tolerance);
+    }
+
+    public MinimaxBot(int depth, Evaluator personality, int tolerance){
         this.depth = depth;
         this.personality = personality;
+        this.tolerance = tolerance;
     }
 
     @Override
     public int chooseMove(GameState state) {
         Side me = state.current();
-        int bestScore = Integer.MIN_VALUE;
-        int bestPit = -1;
 
-        int alpha = Integer.MIN_VALUE;
-        int beta = Integer.MAX_VALUE;
         List<Integer> moves = engine.legalMoves(state);
         Collections.shuffle(moves, random);
-        List<Integer> ordered = orderedMoves(moves, state.board(), state.current());
-        for (int pitIndex : ordered){
-            int score = search(engine.move(state,pitIndex),depth - 1, me,alpha,beta);
-            if (score > bestScore) {
-                bestPit = pitIndex;
-                bestScore = score;
-            }
-            alpha = Math.max(bestScore,alpha);
+        orderedMoves(moves, state.board(), state.current());
+
+        int[] scores = new int[moves.size()];
+        int bestScore = -INF;
+        for (int i = 0; i < moves.size(); i++){
+            int score = search(engine.move(state, moves.get(i)), depth - 1, me, bestScore - tolerance - 1, INF);
+            scores[i] = score;
+            bestScore = Math.max(bestScore, score);
         }
-        return bestPit;
+
+        List<Integer> candidates = new ArrayList<>();
+        for (int i = 0; i < moves.size(); i++)
+            if (scores[i] >= bestScore - tolerance) candidates.add(moves.get(i));
+
+        return candidates.get(random.nextInt(candidates.size()));
     }
 
     private int search(GameState state, int depth, Side me, int alpha, int beta){

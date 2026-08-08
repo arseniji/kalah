@@ -7,9 +7,15 @@ import org.example.game.Side;
 public class MinimaxBot implements Bot{
     private final Engine engine = new Engine();
     private final int depth;
+    private final Evaluator personality;
 
     public MinimaxBot(int depth){
+        this(depth,Personality.Balanced);
+    }
+
+    public MinimaxBot(int depth, Evaluator personality){
         this.depth = depth;
+        this.personality = personality;
     }
 
     @Override
@@ -32,7 +38,7 @@ public class MinimaxBot implements Bot{
     }
 
     private int search(GameState state, int depth, Side me, int alpha, int beta){
-        if (state.gameOver() || depth == 0) return eval(state,me);
+        if (state.gameOver() || depth == 0) return personality.evaluate(state, me);
         boolean maximization = me == state.current();
         int best = maximization ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         for (int pitIndex : engine.legalMoves(state)){
@@ -49,10 +55,4 @@ public class MinimaxBot implements Bot{
         }
         return best;
     }
-
-    private int eval(GameState state, Side me){
-        int diff = state.board().getPit(me.store) - state.board().getPit(me.opponent().store);
-        return state.gameOver() ? diff * 100 : diff; //chtobi hotel zakonchit
-    }
-
 }

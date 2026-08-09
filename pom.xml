@@ -16,6 +16,7 @@
         <module>kalah-bot</module>
         <module>kalah-cli</module>
         <module>kalah-api</module>
+        <module>kalah-desktop</module>
     </modules>
 
     <properties>

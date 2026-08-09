@@ -18,6 +18,12 @@ public class Engine {
         return moves;
     }
 
+    public int[] sowPath(GameState state, int index){
+        if (!isLegal(state, index))
+            throw new IllegalArgumentException("Недопустимый ход: " + index);
+        return state.board().sowPath(index, state.current().opponent().store);
+    }
+
     public GameState move(GameState state, int index){
         if (!isLegal(state, index))
             throw new IllegalArgumentException("Недопустимый ход: " + index);

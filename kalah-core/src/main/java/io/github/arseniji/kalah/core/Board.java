@@ -38,6 +38,17 @@ public class Board {
         return index;
     }
 
+    public int[] sowPath(int from, int skip) {
+        int[] path = new int[board[from]];
+        int index = from;
+        for (int i = 0; i < path.length; i++) {
+            index = nextPit(index);
+            if (index == skip) index = nextPit(index);
+            path[i] = index;
+        }
+        return path;
+    }
+
     public int takeAll(int index){
         int value = board[index];
         board[index] = 0;

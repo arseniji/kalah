@@ -33,9 +33,7 @@ public class LocalSession implements GameSession{
     public GameView move(int pit) {
         List<MoveStep> played = new ArrayList<>();
 
-        Side whoMoved = state.current();
-        state = engine.move(state, pit);
-        played.add(new MoveStep(pit,whoMoved,state.board().getBoard()));
+        played.add(step(pit));
 
         steps = playBots(played);
         return toView(steps);
@@ -43,12 +41,16 @@ public class LocalSession implements GameSession{
 
     private List<MoveStep> playBots(List<MoveStep> played){
         while (!state.gameOver() && botFor(state.current()) != null) {
-            int botPit = botFor(state.current()).chooseMove(state);
-            Side whoMoved = state.current();
-            state = engine.move(state, botPit);
-            played.add(new MoveStep(botPit,whoMoved,state.board().getBoard()));
+            played.add(step(botFor(state.current()).chooseMove(state)));
         }
         return List.copyOf(played);
+    }
+
+    private MoveStep step(int pit){
+        Side whoMoved = state.current();
+        int[] sowPath = engine.sowPath(state, pit);
+        state = engine.move(state, pit);
+        return new MoveStep(pit, whoMoved, sowPath, state.board().getBoard());
     }
 
     private GameView toView(List<MoveStep> played){

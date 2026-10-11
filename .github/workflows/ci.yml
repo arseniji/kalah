@@ -15,4 +15,4 @@ jobs:
           java-version: 25
           cache: maven
       - name: Run tests (core)
-        run: mvn -B test -pl core -am
+        run: mvn -B test -pl :kalah-core -am

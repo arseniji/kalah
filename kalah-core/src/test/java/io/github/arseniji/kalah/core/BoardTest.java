@@ -1,10 +1,8 @@
 package io.github.arseniji.kalah.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
-
+import static org.junit.jupiter.api.Assertions.*;
 public class BoardTest {
 
     private static final int NO_SKIP = -1;

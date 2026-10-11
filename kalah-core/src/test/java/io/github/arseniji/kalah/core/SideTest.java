@@ -1,11 +1,8 @@
 package io.github.arseniji.kalah.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-
+import static org.junit.jupiter.api.Assertions.*;
 public class SideTest {
 
     @Test
